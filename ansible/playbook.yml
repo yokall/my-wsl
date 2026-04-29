@@ -1,0 +1,12 @@
+---
+- name: Configure WSL Ubuntu dev environment
+  hosts: localhost
+  connection: local
+  become: true
+  roles:
+    - base
+    - shell
+    - docker
+    - dotnet
+    - gcloud
+    - dotfiles

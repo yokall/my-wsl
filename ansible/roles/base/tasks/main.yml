@@ -1,0 +1,21 @@
+---
+- name: Install base packages
+  ansible.builtin.apt:
+    name:
+      - git
+      - curl
+      - wget
+      - jq
+      - tmux
+      - byobu
+      - vim
+      - build-essential
+      - perl
+      - less
+      - python3
+      - python3-pip
+      - unzip
+      - zip
+      - openssh-client
+    state: present
+    update_cache: true

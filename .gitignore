@@ -1,0 +1,10 @@
+*.key
+*.pem
+id_*
+known_hosts*
+ssh-agent
+.ssh/
+.ansible/
+*.tar.gz
+*.tar
+*.vhdx

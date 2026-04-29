@@ -1,0 +1,5 @@
+---
+ansible_user: colin
+ansible_python_interpreter: /usr/bin/python3
+
+docker_arch: "{{ ansible_architecture | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}"

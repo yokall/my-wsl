@@ -1,0 +1,31 @@
+---
+- name: Install zsh
+  ansible.builtin.apt:
+    name: zsh
+    state: present
+    update_cache: true
+
+- name: Set zsh as default shell
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    shell: /usr/bin/zsh
+
+- name: Clone zinit # noqa: latest
+  ansible.builtin.git:
+    repo: https://github.com/zdharma-continuum/zinit.git
+    dest: "/home/{{ ansible_user }}/.local/share/zinit/zinit.git"
+    clone: true
+    update: false
+    depth: 1
+  become: true
+  become_user: "{{ ansible_user }}"
+
+- name: Clone powerlevel10k # noqa: latest
+  ansible.builtin.git:
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: "/home/{{ ansible_user }}/.local/share/zinit/plugins/romkatv---powerlevel10k"
+    clone: true
+    update: false
+    depth: 1
+  become: true
+  become_user: "{{ ansible_user }}"

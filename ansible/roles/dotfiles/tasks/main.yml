@@ -1,0 +1,24 @@
+---
+- name: Symlink .zshrc
+  ansible.builtin.file:
+    src: "{{ playbook_dir }}/../dotfiles/.zshrc"
+    dest: "/home/{{ ansible_user }}/.zshrc"
+    state: link
+  become: true
+  become_user: "{{ ansible_user }}"
+
+- name: Symlink .p10k.zsh
+  ansible.builtin.file:
+    src: "{{ playbook_dir }}/../dotfiles/.p10k.zsh"
+    dest: "/home/{{ ansible_user }}/.p10k.zsh"
+    state: link
+  become: true
+  become_user: "{{ ansible_user }}"
+
+- name: Symlink .gitconfig
+  ansible.builtin.file:
+    src: "{{ playbook_dir }}/../dotfiles/.gitconfig"
+    dest: "/home/{{ ansible_user }}/.gitconfig"
+    state: link
+  become: true
+  become_user: "{{ ansible_user }}"
