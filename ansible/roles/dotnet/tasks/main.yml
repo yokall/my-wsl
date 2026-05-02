@@ -1,17 +1,4 @@
 ---
-- name: Install Microsoft package feed signing key
-  ansible.builtin.apt_key:
-    url: https://packages.microsoft.com/keys/microsoft.asc
-    state: present
-
-- name: Add Microsoft package feed
-  ansible.builtin.apt_repository:
-    repo: >-
-      deb [arch={{ docker_arch }} signed-by=/usr/share/keyrings/microsoft-prod.gpg]
-      https://packages.microsoft.com/repos/dotnet {{ ansible_distribution_release }} main
-    state: present
-    filename: dotnet
-
 - name: Install .NET 10 SDK
   ansible.builtin.apt:
     name: dotnet-sdk-10.0
