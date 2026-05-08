@@ -24,18 +24,23 @@ wsl --install -d Ubuntu-26.04   # install fresh 26.04
 
 Complete the initial Ubuntu setup (create `colin` user).
 
-### Step 3: Install Ansible
+### Step 3: Enable Passwordless Sudo
+
+```bash
+echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER
+sudo chmod 0440 /etc/sudoers.d/$USER
+```
+
+### Step 4: Install Ansible
 
 Ubuntu 26.04 ships with Python 3 but **not** Ansible. You must install Ansible before running the playbook.
-
-#### Option A: Install from Ubuntu packages (recommended)
 
 ```bash
 # Update package lists first
 sudo apt update && sudo apt upgrade -y
 
 # Install Ansible
-sudo apt install -y ansible
+sudo apt install -y ansible gh
 
 # Verify installation
 ansible --version
@@ -43,56 +48,26 @@ ansible --version
 
 This installs the version of Ansible packaged by Ubuntu 26.04. It is stable and well-tested.
 
-#### Option B: Install latest version via pip
-
-If you need a newer version of Ansible than what Ubuntu packages provide:
+### Step 5: Clone and Run
 
 ```bash
-# Install pip first
-sudo apt update
-sudo apt install -y python3-pip
-
-# Install Ansible via pip
-pip3 install --user ansible
-
-# Ensure ~/.local/bin is in your PATH
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-
-# Verify installation
-ansible --version
-```
-
-#### Troubleshooting Ansible Installation
-
-**`ansible: command not found` after apt install:**
-Run `hash -r` or open a new terminal.
-
-**`ansible: command not found` after pip install:**
-Ensure `~/.local/bin` is in your PATH:
-```bash
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-### Step 4: Clone and Run
-
-```bash
-# Clone this repo
-git clone <repo-url> ~/my-wsl
+# Clone this Repository
+gh auth login
+gh repo clone yokall/my-wsl ~/my-wsl
 cd ~/my-wsl
 
 # Run the playbook
-ansible-playbook ansible/playbook.yml -K
+ansible-playbook ansible/playbook.yml
 # -K prompts for your sudo password
 ```
 
-### Step 5: Restore SSH Keys
+### Step 6: Restore SSH Keys
 
 ```bash
 ./scripts/restore-ssh.sh
 ```
 
-### Step 6: Restore Project Directories
+### Step 7: Restore Project Directories
 
 Copy your project directories back from your backup:
 ```bash
@@ -104,7 +79,7 @@ cp -r /path/to/backup/rota-generator ~/
 # ... etc for each project dir
 ```
 
-### Step 7: Restart Your Shell
+### Step 8: Restart Your Shell
 
 ```bash
 exec zsh
@@ -150,8 +125,10 @@ SSH keys are intentionally NOT tracked in git. Use the backup/restore scripts:
 ./scripts/backup-ssh.sh    # copies ~/.ssh/* to ~/.ssh-backup/
 
 # Copy ~/.ssh-backup to a safe location (USB, cloud, etc.)
+cp -r ~/.ssh-backup /mnt/c/backup/
 
 # On new system
+cp -r /mnt/c/backup/.ssh-backup ~
 ./scripts/restore-ssh.sh   # restores ~/.ssh-backup/* to ~/.ssh/
 ```
 
@@ -159,7 +136,7 @@ SSH keys are intentionally NOT tracked in git. Use the backup/restore scripts:
 
 The playbook is idempotent - safe to run multiple times:
 ```bash
-ansible-playbook ansible/playbook.yml -K
+ansible-playbook ansible/playbook.yml
 ```
 
 ## Adding New Packages
@@ -170,15 +147,3 @@ To add packages, edit the appropriate role's `tasks/main.yml`:
 - Dev tools: Add a new role under `ansible/roles/`
 
 Then re-run the playbook.
-
-## Troubleshooting
-
-**Ansible not found after install:** Ensure `~/.local/bin` is in your PATH if using pip.
-
-**Dotfiles not taking effect:** Run `exec zsh` to reload the shell after symlinks are created.
-
-**Docker permission denied:** Log out and back in (or run `newgrp docker`) after Docker installation.
-
-**SSH agent not loading:** The `.zshrc` auto-starts ssh-agent. If keys aren't added, check `~/.ssh/id_ed25519` exists.
-
-**Powerlevel10k prompt not loading:** On first run, you may be prompted to run `p10k configure`. Run it or skip to use the saved configuration.
